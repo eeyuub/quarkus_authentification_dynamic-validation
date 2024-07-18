@@ -19,7 +19,7 @@ import jakarta.ws.rs.core.Response;
 @Path("api/v1/auth")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-@RateLimit(value = 5, window = 10, windowUnit = ChronoUnit.SECONDS)
+@RateLimit(value = 100, window = 5, windowUnit = ChronoUnit.MINUTES)
 public class authController {
 
     @Inject
