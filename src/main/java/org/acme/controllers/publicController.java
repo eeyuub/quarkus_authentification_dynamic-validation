@@ -1,14 +1,14 @@
 package org.acme.controllers;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
-
 import org.acme.exceptions.ValidationException;
 import org.acme.models.user;
 import org.acme.responses.JsonResponse;
 import org.acme.responses.actionResponse;
-import org.acme.security.jwtSecurity;
 import org.acme.services.userService;
 import org.acme.validations.validate_object;
+import io.smallrye.faulttolerance.api.RateLimit;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
@@ -24,6 +24,7 @@ import jakarta.ws.rs.core.Response;
 @Path("/api/v1/public")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
+@RateLimit(value = 5, window = 10, windowUnit = ChronoUnit.SECONDS)
 public class publicController {
 
     @Inject
@@ -35,9 +36,9 @@ public class publicController {
     // @RolesAllowed({ "User", "Admin" })
     public Response createUser(user user) {
         try {
-           
+
             List<String> errorMessages = validate_object.validate(user);
-            
+
             if (errorMessages != null) {
                 throw new ValidationException(String.join(", ", errorMessages));
             }
@@ -45,7 +46,7 @@ public class publicController {
             userService.createUser(user);
 
             return Response.status(Response.Status.CREATED)
-                    .entity(new JsonResponse(true, "User created successfully", user)).build();
+                    .entity(new JsonResponse(true, actionResponse.CREATED.label, user)).build();
 
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -77,17 +78,5 @@ public class publicController {
         return Response.status(Response.Status.OK)
                 .entity(new JsonResponse(true, "admin hello")).build();
     }
-
-    @GET
-    @Path("/helloWithToken")
-    @RolesAllowed({ "User", "Admin" })
-    // @PermitAll
-    public Response sayHelloWithToken() {
-        return Response.status(Response.Status.OK)
-                .entity(new JsonResponse(true,
-                        "Hello in roles allowed user and admin (" + actionResponse.SUCCESS.label + ")"))
-                .build();
-    }
-
 
 }
