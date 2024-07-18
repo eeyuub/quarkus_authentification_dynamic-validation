@@ -7,12 +7,13 @@ import org.acme.models.user;
 import org.acme.responses.JsonResponse;
 import org.acme.responses.actionResponse;
 import org.acme.services.userService;
-import org.acme.validations.validate_object;
+import org.acme.validations.validateObject;
 import io.smallrye.faulttolerance.api.RateLimit;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -34,10 +35,10 @@ public class publicController {
     @Transactional
     @Path("/createUser")
     // @RolesAllowed({ "User", "Admin" })
-    public Response createUser(user user) {
+    public Response createUser(/* @Valid user user */ user user ) {
         try {
 
-            List<String> errorMessages = validate_object.validate(user);
+            List<String> errorMessages = validateObject.validate(user);
 
             if (errorMessages != null) {
                 throw new ValidationException(String.join(", ", errorMessages));

@@ -10,7 +10,7 @@ import jakarta.validation.ValidatorFactory;
 import jakarta.validation.Validation;
 
 
-public class validate_object {
+public class validateObject {
     
     private static final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     public static final Validator validator = factory.getValidator();
